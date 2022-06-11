@@ -3,6 +3,7 @@ const express = require("express");
 const fakeDB = require("./fakeDB");
 const jwt = require("jsonwebtoken");
 const app = express();
+const { check, validationResult } = require("express-validator");
 
 app.use(express.json());
 
