@@ -11,10 +11,32 @@ app.get("/hello", (req, res) => {
     res.send("HELLO");
 })
 
-app.post("/register", async (req, res) => {
-    const { username, password } = req.body;
-    console.log(username, password);
-    res.json("Register route");
+app.post("/register", [
+    check("email", "Please enter a valid email").isEmail(),
+    check("password", "Please enter a password which is more then 5 characters long").isLength({
+        min: 6
+    })
+], async (req, res) => {
+    const { email, password } = req.body;
+    console.log(email, password);
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
+        })
+    }
+
+    const user = fakeDB.find(user => user.email === email);
+
+    if (user) {
+        return res.status(400).json({
+            errors: {
+                msg: "User already exists"
+            }
+        })
+    }
+    res.json("Validation successfull");
 })
 
 app.listen(process.env.PORT, () => {
