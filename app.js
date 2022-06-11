@@ -7,12 +7,32 @@ const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 app.use(express.json());
 
+const checkAuthMiddleware = async (req, res, next) => {
+    // For every request a user is going to send the webtoken
+    const token = req.header("x-auth-token");
+
+    if (!token) {
+        return res.status(400).json("No token is found");
+    }
+    try {
+        let user = jwt.verify(token, process.env.SECRET);
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(400).json("Token is invalid");
+    }
+}
+
 app.get("/hello", (req, res) => {
     res.send("HELLO");
 })
 
-app.get("/users", (req, res) => {
-    res.json({ fakeDB });
+app.get("/publicPosts", (req, res) => {
+    res.json(publicPosts);
+})
+
+app.get("/privatePosts", checkAuthMiddleware, (req, res) => {
+    res.json(privatePosts);
 })
 
 app.post("/register", [
@@ -30,7 +50,7 @@ app.post("/register", [
         })
     }
 
-    const user = fakeDB.find(user => user.email === email);
+    const user = userData.find(user => user.email === email);
 
     if (user) {
         return res.status(400).json({
@@ -50,7 +70,7 @@ app.post("/register", [
         email,
         msg: "I am logged in"
     }, process.env.SECRET, {
-        expiresIn: "30"
+        expiresIn: "3000000"
     })
     res.json(token);
 })
@@ -82,7 +102,7 @@ app.post("/login", async (req, res) => {
         email,
         msg: "User is logged in"
     }, process.env.SECRET, {
-        expiresIn: "30"
+        expiresIn: "3000000"
     })
 
     res.json(token);
