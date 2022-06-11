@@ -11,6 +11,10 @@ app.get("/hello", (req, res) => {
     res.send("HELLO");
 })
 
+app.get("/users", (req, res) => {
+    res.json({ fakeDB });
+})
+
 app.post("/register", [
     check("email", "Please enter a valid email").isEmail(),
     check("password", "Please enter a password which is more then 5 characters long").isLength({
