@@ -45,7 +45,14 @@ app.post("/register", [
         email: email,
         password: hashedPassword,
     })
-    res.json("Validation successfull");
+
+    const token = await jwt.sign({
+        email,
+        msg: "I am logged in"
+    }, process.env.SECRET, {
+        expiresIn: "30"
+    })
+    res.json(token);
 })
 
 app.listen(process.env.PORT, () => {
