@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const fakeDB = require("./fakeDB");
+const { userData, publicPosts, privatePosts } = require("./fakeDB");
 const jwt = require("jsonwebtoken");
 const app = express();
 const { check, validationResult } = require("express-validator");
@@ -41,7 +41,7 @@ app.post("/register", [
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    fakeDB.push({
+    userData.push({
         email: email,
         password: hashedPassword,
     })
@@ -58,7 +58,7 @@ app.post("/register", [
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    let user = fakeDB.find(user => user.email === email);
+    let user = userData.find(user => user.email === email);
 
     if (!user) {
         return res.status(400).json({
