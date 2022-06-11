@@ -4,7 +4,7 @@ const fakeDB = require("./fakeDB");
 const jwt = require("jsonwebtoken");
 const app = express();
 const { check, validationResult } = require("express-validator");
-
+const bcrypt = require("bcryptjs");
 app.use(express.json());
 
 app.get("/hello", (req, res) => {
@@ -36,6 +36,8 @@ app.post("/register", [
             }
         })
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     res.json("Validation successfull");
 })
 
