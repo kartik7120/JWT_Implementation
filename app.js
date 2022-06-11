@@ -18,7 +18,6 @@ app.post("/register", [
     })
 ], async (req, res) => {
     const { email, password } = req.body;
-    console.log(email, password);
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -38,6 +37,10 @@ app.post("/register", [
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    fakeDB.push({
+        email: email,
+        password: hashedPassword,
+    })
     res.json("Validation successfull");
 })
 
